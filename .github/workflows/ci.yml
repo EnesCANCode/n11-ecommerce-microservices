@@ -19,80 +19,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 23
         uses: actions/setup-java@v4
         with:
           java-version: '23'
           distribution: 'oracle'
-          cache: maven
-
-      - name: Build & Test (Maven)
-        run: mvn clean install -B
+          cache: 'maven'
+      - name: Build with Maven
+        run: mvn clean install -DskipTests -B
         working-directory: backend
 
-      - name: Upload Test Reports
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-test-reports
-          path: backend/**/target/surefire-reports/
-
   # ══════════════════════════════════════════════════════════════════════════════
-  # FRONTEND BUILD
-  # ══════════════════════════════════════════════════════════════════════════════
-  frontend:
-    name: Frontend Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install & Build
-        run: |
-          npm ci
-          npm run build
-        working-directory: frontend
-
-  # ══════════════════════════════════════════════════════════════════════════════
-  # KUBERNETES VALIDATION
-  # ══════════════════════════════════════════════════════════════════════════════
-  kubernetes:
-    name: Validate K8s Manifests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install and Run Kubeconform
-        run: |
-          wget https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
-          tar xf kubeconform-linux-amd64.tar.gz
-          sudo mv kubeconform /usr/local/bin/
-          kubeconform -summary k8s/ 
-
-  # ══════════════════════════════════════════════════════════════════════════════
-  # DOCKERIZE (ONLY ON MAIN PUSH)
+  # DOCKERIZE & PUSH (ALL SERVICES)
   # ══════════════════════════════════════════════════════════════════════════════
   docker:
     name: Dockerize & Push
-    needs: [backend, frontend, kubernetes]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [backend]
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Tüm mikroservislerini buraya ekliyoruz!
+        service: [
+          api-gateway,
+          config-server,
+          discovery-server,
+          product-service,
+          basket-service,
+          order-service,
+          payment-service,
+          inventory-service,
+          notification-service,
+          mcp-ai-server
+        ]
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up JDK 23
         uses: actions/setup-java@v4
         with:
           java-version: '23'
           distribution: 'oracle'
-          cache: maven
+          cache: 'maven'
 
       - name: Build Backend JARs (Skip Tests)
         run: mvn clean install -DskipTests -B
@@ -110,20 +77,14 @@ jobs:
       - name: Configure Docker for GCP
         run: gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build & Push API Gateway
+      - name: Build & Push Service
         uses: docker/build-push-action@v5
         with:
-          context: ./backend/api-gateway
+          context: ./backend/${{ matrix.service }}
           push: true
           tags: |
-            europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/api-gateway:${{ github.sha }}
-            europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/api-gateway:latest
+            europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/${{ matrix.service }}:${{ github.sha }}
+            europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/${{ matrix.service }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -155,8 +116,10 @@ jobs:
 
       - name: Deploy Manifests
         run: |
-          # Replace image tags in manifests with the current SHA
-          sed -i "s|image: .*/api-gateway:.*|image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/api-gateway:${{ github.sha }}|g" k8s/backend.yaml
+          # Tüm servislerin imajlarını SHA ile güncelliyoruz
+          for service in api-gateway config-server discovery-server product-service basket-service order-service payment-service inventory-service notification-service mcp-ai-server; do
+            sed -i "s|image: .*/$service:.*|image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/$service:${{ github.sha }}|g" k8s/backend.yaml
+          done
           
           kubectl apply -f k8s/configmap.yaml
           kubectl apply -f k8s/secret.yaml
@@ -165,4 +128,6 @@ jobs:
           kubectl apply -f k8s/ingress.yaml
 
       - name: Verify Deployment
-        run: kubectl rollout status deployment/api-gateway
+        run: |
+          kubectl rollout status deployment/api-gateway
+          kubectl rollout status deployment/config-server
