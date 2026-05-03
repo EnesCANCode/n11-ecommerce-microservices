@@ -92,11 +92,46 @@ jobs:
           cache-to: type=gha,mode=max
 
   # ══════════════════════════════════════════════════════════════════════════════
+  # FRONTEND BUILD & PUSH
+  # ══════════════════════════════════════════════════════════════════════════════
+  frontend:
+    name: Dockerize & Push (frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/519550996615/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'github-deployer@n11-ecommerce.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build & Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/frontend:${{ github.sha }}
+            europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ══════════════════════════════════════════════════════════════════════════════
   # DEPLOY TO GKE
   # ══════════════════════════════════════════════════════════════════════════════
   deploy:
     name: Deploy to GKE
-    needs: [docker]
+    needs: [docker, frontend]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
@@ -119,15 +154,19 @@ jobs:
 
       - name: Deploy Manifests
         run: |
-          # Update image tags for all services
+          # Update image tags for all backend services
           for service in api-gateway config-server discovery-server product-service basket-service order-service payment-service inventory-service notification-service mcp-ai-server; do
             sed -i "s|image: .*/$service:.*|image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/$service:${{ github.sha }}|g" k8s/backend.yaml
           done
+          
+          # Update frontend image tag
+          sed -i "s|image: .*/frontend:.*|image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/frontend:${{ github.sha }}|g" k8s/frontend.yaml
           
           kubectl apply -f k8s/configmap.yaml
           kubectl apply -f k8s/secret.yaml
           kubectl apply -f k8s/infra.yaml
           kubectl apply -f k8s/backend.yaml
+          kubectl apply -f k8s/frontend.yaml
 
       - name: Verify Deployment
         continue-on-error: true

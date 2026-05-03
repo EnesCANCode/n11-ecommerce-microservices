@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: frontend
 spec:
+  type: LoadBalancer
   ports:
     - port: 80
       targetPort: 80
@@ -14,7 +15,9 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
-  replicas: 2
+  replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: frontend
@@ -25,14 +28,14 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: gcr.io/n11-project/frontend:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/frontend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 80
           resources:
             requests:
               memory: "64Mi"
-              cpu: "50m"
+              cpu: "25m"
             limits:
               memory: "128Mi"
               cpu: "100m"
