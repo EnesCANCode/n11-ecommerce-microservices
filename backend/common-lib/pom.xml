@@ -40,7 +40,14 @@
 
     <build>
         <plugins>
-            <!-- Standard JAR packaging, no Spring Boot plugin needed for libraries -->
+            <!-- Parent'tan gelen Spring Boot pluginini bu modül için atla -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
