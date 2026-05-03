@@ -25,7 +25,6 @@
       "webOrigins": ["*"],
       "defaultClientScopes": ["openid", "profile", "email", "roles"],
       "attributes": {
-        "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "*"
       }
     },

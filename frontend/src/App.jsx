@@ -14,7 +14,7 @@ export default function App() {
 
   useEffect(() => {
     keycloak
-      .init({ onLoad: 'check-sso', pkceMethod: 'S256', checkLoginIframe: false })
+      .init({ onLoad: 'check-sso', checkLoginIframe: false })
       .then((authenticated) => {
         setKeycloakReady(true);
         if (authenticated) {
