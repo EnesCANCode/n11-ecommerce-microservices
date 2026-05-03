@@ -12,16 +12,16 @@ public class FallbackController {
 
     @GetMapping("/payment")
     public Mono<ApiResponse<String>> paymentFallback() {
-        return Mono.just(ApiResponse.error(503, "Odeme servisi su anda yanit vermiyor. Lutfen daha sonra tekrar deneyiniz."));
+        return Mono.just(ApiResponse.error("Odeme servisi su anda yanit vermiyor. Lutfen daha sonra tekrar deneyiniz."));
     }
 
     @GetMapping("/order")
     public Mono<ApiResponse<String>> orderFallback() {
-        return Mono.just(ApiResponse.error(503, "Siparis servisi su anda yanit vermiyor. Lutfen daha sonra tekrar deneyiniz."));
+        return Mono.just(ApiResponse.error("Siparis servisi su anda yanit vermiyor. Lutfen daha sonra tekrar deneyiniz."));
     }
 
     @GetMapping("/product")
     public Mono<ApiResponse<String>> productFallback() {
-        return Mono.just(ApiResponse.error(503, "Urun servisi su anda yanit vermiyor. Lutfen daha sonra tekrar deneyiniz."));
+        return Mono.just(ApiResponse.error("Urun servisi su anda yanit vermiyor. Lutfen daha sonra tekrar deneyiniz."));
     }
 }
