@@ -7,7 +7,6 @@ import dev.enes.order.dto.OrderResponse;
 import dev.enes.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,8 +27,8 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Yeni sipariş oluştur", description = "Sepetteki ürünler için yeni bir sipariş kaydı oluşturur.")
-    @ApiResponse(responseCode = "201", description = "Sipariş başarıyla oluşturuldu")
-    public dev.enes.common.dto.ApiResponse<OrderResponse> createOrder(
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Sipariş başarıyla oluşturuldu")
+    public ApiResponse<OrderResponse> createOrder(
             @Valid @RequestBody CreateOrderRequest request,
             @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
             @AuthenticationPrincipal Jwt jwt) {
