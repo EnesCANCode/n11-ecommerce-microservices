@@ -24,7 +24,7 @@ jobs:
           cache: maven
 
       - name: Build & Test (Maven)
-        run: mvn clean verify -B
+        run: mvn clean install -B
         working-directory: backend
 
       - name: Upload Test Reports
@@ -65,14 +65,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Kubectl Syntax Check (Dry Run)
-        run: |
-          kubectl create --dry-run=client --validate=false -f k8s/configmap.yaml
-          kubectl create --dry-run=client --validate=false -f k8s/secret.yaml
-          kubectl create --dry-run=client --validate=false -f k8s/infra.yaml
-          kubectl create --dry-run=client --validate=false -f k8s/backend.yaml
-          kubectl create --dry-run=client --validate=false -f k8s/frontend.yaml
-          kubectl create --dry-run=client --validate=false -f k8s/ingress.yaml
+      - name: Validate K8s Manifests with Kubeconform
+        uses: yannh/kubeconform-action@v1
+        with:
+          kubernetes-version: '1.28.0'
+          summary: true
+          manifests: k8s/  
 
   # ══════════════════════════════════════════════════════════════════════════════
   # DOCKERIZE (ONLY ON MAIN PUSH)
