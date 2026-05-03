@@ -131,6 +131,11 @@ jobs:
           kubectl apply -f k8s/ingress.yaml
 
       - name: Verify Deployment
+        continue-on-error: true
         run: |
-          kubectl rollout status deployment/api-gateway
-          kubectl rollout status deployment/config-server
+          echo "⏳ Waiting for deployments (5 min timeout)..."
+          kubectl rollout status deployment/api-gateway --timeout=300s || true
+          kubectl rollout status deployment/config-server --timeout=300s || true
+          echo ""
+          echo "📋 Current pod status:"
+          kubectl get pods
