@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: config-server
-          image: gcr.io/n11-project/config-server:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/config-server:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8888
@@ -53,6 +53,7 @@ spec:
               port: 8888
             initialDelaySeconds: 15
             periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -80,7 +81,7 @@ spec:
     spec:
       containers:
         - name: discovery-server
-          image: gcr.io/n11-project/discovery-server:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/discovery-server:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8761
@@ -105,7 +106,8 @@ spec:
               path: /actuator/health/readiness
               port: 8761
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -133,7 +135,7 @@ spec:
     spec:
       containers:
         - name: api-gateway
-          image: gcr.io/n11-project/api-gateway:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/api-gateway:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
@@ -158,7 +160,8 @@ spec:
               path: /actuator/health/readiness
               port: 8000
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -186,7 +189,7 @@ spec:
     spec:
       containers:
         - name: product-service
-          image: gcr.io/n11-project/product-service:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/product-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8082
@@ -224,7 +227,8 @@ spec:
               path: /actuator/health/readiness
               port: 8082
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -252,7 +256,7 @@ spec:
     spec:
       containers:
         - name: basket-service
-          image: gcr.io/n11-project/basket-service:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/basket-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8083
@@ -277,7 +281,8 @@ spec:
               path: /actuator/health/readiness
               port: 8083
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -305,7 +310,7 @@ spec:
     spec:
       containers:
         - name: order-service
-          image: gcr.io/n11-project/order-service:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/order-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8084
@@ -343,7 +348,8 @@ spec:
               path: /actuator/health/readiness
               port: 8084
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -371,7 +377,7 @@ spec:
     spec:
       containers:
         - name: payment-service
-          image: gcr.io/n11-project/payment-service:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/payment-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8085
@@ -409,7 +415,8 @@ spec:
               path: /actuator/health/readiness
               port: 8085
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -437,7 +444,7 @@ spec:
     spec:
       containers:
         - name: inventory-service
-          image: gcr.io/n11-project/inventory-service:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/inventory-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8086
@@ -475,7 +482,8 @@ spec:
               path: /actuator/health/readiness
               port: 8086
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -503,7 +511,7 @@ spec:
     spec:
       containers:
         - name: notification-service
-          image: gcr.io/n11-project/notification-service:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/notification-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8087
@@ -541,7 +549,8 @@ spec:
               path: /actuator/health/readiness
               port: 8087
             initialDelaySeconds: 15
-            periodSeconds: 5---
+            periodSeconds: 5
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -569,7 +578,7 @@ spec:
     spec:
       containers:
         - name: mcp-ai-server
-          image: gcr.io/n11-project/mcp-ai-server:latest
+          image: europe-west3-docker.pkg.dev/n11-ecommerce/n11-repo/mcp-ai-server:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8090
