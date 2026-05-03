@@ -7,6 +7,8 @@ export default function Navbar({ user, onLogin, onLogout, onRegister }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+  const [sellerModalOpen, setSellerModalOpen] = useState(false);
+  const [applicationSuccess, setApplicationSuccess] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,10 +67,18 @@ export default function Navbar({ user, onLogin, onLogout, onRegister }) {
               <Link to="/orders" className="nav-action" title="Siparişler">
                 <FiPackage />
               </Link>
-              {user.roles?.includes('SELLER') && (
+              {user.roles?.includes('SELLER') ? (
                 <Link to="/seller" className="nav-action" title="Mağazam">
                   <FiUser />
                 </Link>
+              ) : (
+                <button 
+                  className="btn btn-accent btn-sm" 
+                  onClick={() => setSellerModalOpen(true)}
+                  style={{ marginLeft: '10px' }}
+                >
+                  Satıcı Ol
+                </button>
               )}
               <div className="user-menu">
                 <button className="nav-action user-btn" onClick={() => setMenuOpen(!menuOpen)}>
@@ -99,6 +109,41 @@ export default function Navbar({ user, onLogin, onLogout, onRegister }) {
           )}
         </div>
       </div>
+
+      {/* Seller Application Modal */}
+      {sellerModalOpen && (
+        <div className="modal-overlay" onClick={() => setSellerModalOpen(false)}>
+          <div className="modal-content animate-fade-in" onClick={e => e.stopPropagation()} style={{ maxWidth: '400px', padding: '30px', textAlign: 'center' }}>
+            <button className="modal-close" onClick={() => setSellerModalOpen(false)}><FiX /></button>
+            {!applicationSuccess ? (
+              <>
+                <h2>N11'de Satıcı Olun 🚀</h2>
+                <p style={{ margin: '15px 0', color: '#888' }}>Milyonlarca müşteriye ulaşmak için mağazanızı açın. Sunum ve test ortamı için hemen onaylanacaksınız!</p>
+                <input type="text" className="input" placeholder="Mağaza Adınız" style={{ marginBottom: '10px' }} />
+                <input type="text" className="input" placeholder="Vergi Kimlik No" style={{ marginBottom: '15px' }} />
+                <button className="btn btn-primary" style={{ width: '100%' }} onClick={() => setApplicationSuccess(true)}>
+                  Başvuruyu Tamamla
+                </button>
+              </>
+            ) : (
+              <>
+                <div style={{ fontSize: '48px', marginBottom: '15px' }}>✅</div>
+                <h2 style={{ color: '#4ade80' }}>Başvurunuz Onaylandı!</h2>
+                <p style={{ margin: '15px 0', lineHeight: '1.6' }}>
+                  Sistemimize hoş geldiniz. Jürilere ve hocaya projeyi tanıtırken Satıcı Paneli'ni göstermek için hemen hesabınızdan <b>Çıkış Yapın</b> ve aşağıdaki test bilgileriyle giriş yapın:
+                </p>
+                <div style={{ background: '#222', padding: '15px', borderRadius: '8px', fontFamily: 'monospace', textAlign: 'left' }}>
+                  E-posta: <b>seller@n11.com</b><br />
+                  Şifre: <b>password</b>
+                </div>
+                <button className="btn btn-accent" style={{ width: '100%', marginTop: '20px' }} onClick={() => setSellerModalOpen(false)}>
+                  Harika, Anladım
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
