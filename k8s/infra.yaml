@@ -241,10 +241,10 @@ spec:
             - containerPort: 8180
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "50m"
-            limits:
               memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
               cpu: "500m"
           volumeMounts:
             - name: keycloak-realm-vol
