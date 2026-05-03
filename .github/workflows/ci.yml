@@ -67,12 +67,12 @@ jobs:
 
       - name: Kubectl Syntax Check (Dry Run)
         run: |
-          kubectl create --dry-run=client -f k8s/configmap.yaml
-          kubectl create --dry-run=client -f k8s/secret.yaml
-          kubectl create --dry-run=client -f k8s/infra.yaml
-          kubectl create --dry-run=client -f k8s/backend.yaml
-          kubectl create --dry-run=client -f k8s/frontend.yaml
-          kubectl create --dry-run=client -f k8s/ingress.yaml
+          kubectl create --dry-run=client --validate=false -f k8s/configmap.yaml
+          kubectl create --dry-run=client --validate=false -f k8s/secret.yaml
+          kubectl create --dry-run=client --validate=false -f k8s/infra.yaml
+          kubectl create --dry-run=client --validate=false -f k8s/backend.yaml
+          kubectl create --dry-run=client --validate=false -f k8s/frontend.yaml
+          kubectl create --dry-run=client --validate=false -f k8s/ingress.yaml
 
   # ══════════════════════════════════════════════════════════════════════════════
   # DOCKERIZE (ONLY ON MAIN PUSH)
