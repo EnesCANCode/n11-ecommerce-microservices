@@ -203,7 +203,7 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.2.4
-          args: ["start-dev"]
+          args: ["start-dev", "--import-realm"]
           env:
             - name: KC_DB
               value: postgres
@@ -219,8 +219,12 @@ spec:
                 secretKeyRef:
                   name: n11-secrets
                   key: KEYCLOAK_DB_PASSWORD
-            - name: KC_HOSTNAME
-              value: localhost
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: KC_HTTP_RELATIVE_PATH
+              value: "/auth"
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"
             - name: KC_HTTP_PORT
               value: "8180"
             - name: KEYCLOAK_ADMIN
@@ -242,3 +246,10 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          volumeMounts:
+            - name: keycloak-realm-vol
+              mountPath: /opt/keycloak/data/import
+      volumes:
+        - name: keycloak-realm-vol
+          configMap:
+            name: keycloak-realm

@@ -16,7 +16,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8180/realms/n11
+          jwk-set-uri: http://keycloak:8180/auth/realms/n11/protocol/openid-connect/certs
 
 server:
   port: 8086
