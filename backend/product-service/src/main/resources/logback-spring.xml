@@ -5,33 +5,41 @@
 
     <springProperty scope="context" name="appName" source="spring.application.name"/>
 
-    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>:5044</destination>
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp/>
-                <version/>
-                <message/>
-                <loggerName/>
-                <threadName/>
-                <logLevel/>
-                <logLevelValue/>
-                <stackTrace/>
-                <contextName/>
-                <arguments/>
-                <pattern>
+    <springProfile name="logstash">
+        <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>${LOGSTASH_HOST:-logstash}:5044</destination>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp/>
+                    <version/>
+                    <message/>
+                    <loggerName/>
+                    <threadName/>
+                    <logLevel/>
+                    <logLevelValue/>
+                    <stackTrace/>
+                    <contextName/>
+                    <arguments/>
                     <pattern>
-                        {
-                            "service": ""
-                        }
+                        <pattern>
+                            {
+                                "service": "${appName}"
+                            }
+                        </pattern>
                     </pattern>
-                </pattern>
-            </providers>
-        </encoder>
-    </appender>
+                </providers>
+            </encoder>
+        </appender>
+    </springProfile>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="LOGSTASH"/>
     </root>
+
+    <springProfile name="logstash">
+        <root level="INFO">
+            <appender-ref ref="LOGSTASH"/>
+        </root>
+    </springProfile>
 </configuration>
+
