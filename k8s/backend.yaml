@@ -192,7 +192,8 @@ spec:
             - containerPort: 8082
           envFrom:
             - configMapRef:
-                name: n11-config            env:
+                name: n11-config
+          env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/productdb
             - name: SPRING_DATASOURCE_USERNAME
@@ -310,7 +311,8 @@ spec:
             - containerPort: 8084
           envFrom:
             - configMapRef:
-                name: n11-config            env:
+                name: n11-config
+          env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/orderdb
             - name: SPRING_DATASOURCE_USERNAME
@@ -375,7 +377,8 @@ spec:
             - containerPort: 8085
           envFrom:
             - configMapRef:
-                name: n11-config            env:
+                name: n11-config
+          env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/paymentdb
             - name: SPRING_DATASOURCE_USERNAME
@@ -440,7 +443,8 @@ spec:
             - containerPort: 8086
           envFrom:
             - configMapRef:
-                name: n11-config            env:
+                name: n11-config
+          env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/inventorydb
             - name: SPRING_DATASOURCE_USERNAME
@@ -505,7 +509,8 @@ spec:
             - containerPort: 8087
           envFrom:
             - configMapRef:
-                name: n11-config            env:
+                name: n11-config
+          env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/notificationdb
             - name: SPRING_DATASOURCE_USERNAME
