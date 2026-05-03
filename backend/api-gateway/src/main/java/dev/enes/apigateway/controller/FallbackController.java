@@ -1,4 +1,4 @@
-﻿package dev.enes.apigateway.controller;
+package dev.enes.apigateway.controller;
 
 import dev.enes.common.dto.ApiResponse;
 import org.springframework.web.bind.annotation.GetMapping;
