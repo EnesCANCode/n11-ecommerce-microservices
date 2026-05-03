@@ -1,0 +1,39 @@
+services:
+
+  # ═══════════════════════════════════ MONITORING ═══════════════════════════════════
+  prometheus:
+    image: prom/prometheus:v3.4.0
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+
+  grafana:
+    image: grafana/grafana:11.6.0
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - prometheus
+
+  # ═══════════════════════════════════ TRACING ═══════════════════════════════════
+  jaeger:
+    image: jaegertracing/jaeger:2.6.0
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"   # UI
+      - "4317:4317"     # gRPC OTLP
+      - "4318:4318"     # HTTP OTLP
+
+volumes:
+  prometheus-data:
+  grafana-data:

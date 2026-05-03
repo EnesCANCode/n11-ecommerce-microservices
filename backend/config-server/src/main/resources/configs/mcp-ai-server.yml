@@ -1,0 +1,4 @@
+spring:
+  ai:
+    gemini:
+      api-key: "AIzaSyCFZaoKWuhZV-wGpI2pYvQ1CdCwF3YS-Ok"

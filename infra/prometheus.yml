@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'n11-microservices'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: 
+          - 'host.docker.internal:8000' # API Gateway
+          - 'host.docker.internal:8082' # Product
+          - 'host.docker.internal:8083' # Basket
+          - 'host.docker.internal:8084' # Order
+          - 'host.docker.internal:8085' # Payment
+          - 'host.docker.internal:8086' # Inventory
+          - 'host.docker.internal:8087' # Notification
