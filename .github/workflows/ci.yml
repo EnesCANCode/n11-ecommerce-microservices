@@ -65,12 +65,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate K8s Manifests with Kubeconform
-        uses: yannh/kubeconform-action@v1
-        with:
-          kubernetes-version: '1.28.0'
-          summary: true
-          manifests: k8s/  
+      - name: Install and Run Kubeconform
+        run: |
+          wget https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform-linux-amd64.tar.gz
+          sudo mv kubeconform /usr/local/bin/
+          kubeconform -summary k8s/ 
 
   # ══════════════════════════════════════════════════════════════════════════════
   # DOCKERIZE (ONLY ON MAIN PUSH)
