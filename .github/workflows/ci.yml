@@ -77,6 +77,9 @@ jobs:
       - name: Configure Docker for GCP
         run: gcloud auth configure-docker europe-west3-docker.pkg.dev --quiet
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build & Push Service
         uses: docker/build-push-action@v5
         with:
